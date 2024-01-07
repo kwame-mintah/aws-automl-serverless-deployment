@@ -1,6 +1,7 @@
 # AWS AutoMLOps Serverless Deployment
 
 [![🧩 Serverless deployment to AWS](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-deploy.yml/badge.svg)](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-deploy.yml)
+[![💥 Serverless remove resources](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-remove.yml/badge.svg)](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-remove.yml)
 
 This repository contains the serverless deployment yaml for lambda functions used to achieve MLOps Level 2 within AWS. Not all resources
 are created by this deployment in AWS, some resources are created via the [terraform-aws-machine-learning-pipeline](https://github.com/kwame-mintah/terraform-aws-machine-learning-pipeline) repository.

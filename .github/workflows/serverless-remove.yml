@@ -1,4 +1,4 @@
-name: "💥 Serverless remove all resources"
+name: "💥 Serverless remove resources"
 
 permissions:
   contents: read
@@ -20,6 +20,11 @@ jobs:
     steps:
       - name: "Checkout"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: "Curl latest lambda tag versions"
+        id: "lambda-verions"
+        run: |
+          echo "DATA_PREPROCESSING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-data-preprocessing/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
 
       - name: "Serverless remove"
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca
