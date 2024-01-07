@@ -23,16 +23,24 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+      - name: "Checkout"
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@b39b52d1213e96004bfcb1c61a8a6fa8ab84f3e8
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
-      - name: "serverless deploy"
+
+      - name: "Curl latest lambda tag versions"
+        id: "lambda-verions"
+        run: |
+          echo "DATA_PREPROCESSING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-data-preprocessing/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
+
+      - name: "Serverless deployment"
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca
         with:
-          args: deploy
+          args: -c "serverless plugin install --name serverless-iam-roles-per-function && serverless deploy"
+          entrypoint: /bin/sh
         env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          DATA_PREPROCESSING_VERSION: ${{ steps.lambda-verions.outputs.DATA_PREPROCESSING_VERSION }}
