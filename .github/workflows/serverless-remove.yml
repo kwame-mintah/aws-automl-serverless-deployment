@@ -21,7 +21,7 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
-      - name: "Curl latest lambda tag versions"
+      - name: "Curl latest lambda tags"
         id: "lambda-verions"
         run: |
           echo "DATA_PREPROCESSING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-data-preprocessing/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
