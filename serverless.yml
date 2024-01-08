@@ -47,4 +47,5 @@ functions:
           - ksm:GenerateDataKey
           - kms:Decrypt
         Resource:
-          - ""
+          - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-dev-data-kms-key-arn}"
