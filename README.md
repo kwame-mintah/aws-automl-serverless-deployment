@@ -16,6 +16,11 @@ The lambda functions deployed aim to automate, preparing data and transforming f
 2. Data is uploaded to a GitHub repository.
 3. A GitHub action is triggered uploading the data to an S3 Bucket.
 4. Lambda function for data preprocessing is run due to an event trigger on the bucket.
+5. Upon completion the transform data is uploaded to another bucket.
+6. Lambda function to start the training job is started due to an event trigger on the bucket.
+7. Training job is started using data split for train, test and validation purposes.
+8. Completed model is uploaded to an S3 Bucket.
+9. Lambda function to deploy the new model for inference and evaluation etc.
 
 ## GitHub Action (CI/CD)
 
