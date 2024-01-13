@@ -27,16 +27,27 @@ functions:
     environment:
       PREPROCESSED_INPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
       PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-data}
+    events:
+      - s3:
+          bucket: ${ssm:mlops-eu-west-2-dev-automl-data}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: data/
+            - suffix: .csv
+          existing: true # Bucket created via Terraform
     iamRoleStatementsName: DataPreProcessingRole
     iamRoleStatements:
       - Effect: "Allow"
         Action:
           - s3:DeleteObject
           - s3:DeleteObjectVersion
+          - s3:GetObject
+          - s3:GetObjectTagging
           - s3:GetObjectVersionTagging
           - s3:ListBucket
           - s3:ListBucketVersions
           - s3:PutObject
+          - s3:PutObjectTagging
         Resource:
           - ${ssm:mlops-eu-west-2-dev-automl-data-arn}
           - ${ssm:mlops-eu-west-2-dev-automl-data-arn}/*
