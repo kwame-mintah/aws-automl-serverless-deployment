@@ -22,6 +22,11 @@ The lambda functions deployed aim to automate, preparing data and transforming f
 8. Completed model is uploaded to an S3 Bucket.
 9. Lambda function to deploy the new model for inference and evaluation etc.
 
+## Lambda repositories
+
+The source code for all lambda functions are stored in GitHub:
+- dataPreProcessing: [aws-lambda-data-preprocessing](https://github.com/kwame-mintah/aws-lambda-data-preprocessing)
+
 ## GitHub Action (CI/CD)
 
 The GitHub Action will deploy the lambda functions using the [serverless](https://github.com/serverless/github-action) action. Docker images used for deployment are stored
