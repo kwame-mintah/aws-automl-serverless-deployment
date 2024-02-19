@@ -55,7 +55,7 @@ functions:
           - ${ssm:mlops-eu-west-2-dev-data-arn}/*
       - Effect: "Allow"
         Action:
-          - ksm:GenerateDataKey
+          - kms:GenerateDataKey
           - kms:Decrypt
         Resource:
           - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
