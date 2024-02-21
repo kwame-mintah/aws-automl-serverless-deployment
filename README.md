@@ -10,7 +10,7 @@ The lambda functions deployed aim to automate, preparing data and transforming f
 
 # Architecture
 
-![](/docs/drawio/aws-automlops-deployment.png)
+![proposed-automlops-level-2](/docs/drawio/aws-automlops-deployment.png)
 
 1. User has received new data.
 2. Data is uploaded to a GitHub repository.
@@ -25,7 +25,9 @@ The lambda functions deployed aim to automate, preparing data and transforming f
 ## Lambda repositories
 
 The source code for all lambda functions are stored in GitHub:
+
 - dataPreProcessing: [aws-lambda-data-preprocessing](https://github.com/kwame-mintah/aws-lambda-data-preprocessing)
+- modelTraining: [aws-lambda-model-training](https://github.com/kwame-mintah/aws-lambda-model-training)
 
 ## GitHub Action (CI/CD)
 

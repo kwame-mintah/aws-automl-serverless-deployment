@@ -60,3 +60,7 @@ functions:
         Resource:
           - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
           - "${ssm:mlops-eu-west-2-dev-data-kms-key-arn}"
+
+  modelTraining:
+    name: MLOpsModelTraining
+    image: ${self:custom.ecrRepository}/mlops-model-training:${env:MODEL_TRAINING_VERSION}
