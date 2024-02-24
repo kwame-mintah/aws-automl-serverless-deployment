@@ -64,3 +64,50 @@ functions:
   modelTraining:
     name: MLOpsModelTraining
     image: ${self:custom.ecrRepository}/mlops-model-training:${env:MODEL_TRAINING_VERSION}
+    environment:
+      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
+      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
+    events:
+      - s3:
+          bucket: ${ssm:mlops-eu-west-2-dev-automl-data}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: automl/
+            - suffix: .csv
+          existing: true # Bucket created via Terraform
+    iamRoleStatementsName: ModelTrainingRole
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - s3:GetObject
+          - s3:GetObjectTagging
+          - s3:GetObjectVersionTagging
+          - s3:ListBucket
+          - s3:ListBucketVersions
+          - s3:PutObject
+          - s3:PutObjectTagging
+        Resource:
+          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}
+          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}/*
+          - ${ssm:mlops-eu-west-2-dev-model-output-arn}
+          - ${ssm:mlops-eu-west-2-dev-model-output-arn}/*
+      - Effect: "Allow"
+        Action:
+          - kms:GenerateDataKey
+          - kms:Decrypt
+        Resource:
+          - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-dev-model-output-kms-key-arn}"
+      - Effect: "Allow"
+        Action:
+          - iam:GetRole
+          - iam:PassRole
+        Resource:
+          - "${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}"
+      - Effect: "Allow"
+        Action:
+          - sagemaker:CreateHyperParameterTuningJob
+          - sagemaker:CreateModel
+          - sagemaker:CreateTrainingJob
+        Resource:
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
