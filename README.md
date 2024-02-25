@@ -28,6 +28,7 @@ The source code for all lambda functions are stored in GitHub:
 
 - dataPreProcessing: [aws-lambda-data-preprocessing](https://github.com/kwame-mintah/aws-lambda-data-preprocessing)
 - modelTraining: [aws-lambda-model-training](https://github.com/kwame-mintah/aws-lambda-model-training)
+- modelDeployment: [aws-lambda-model-deployment](https://github.com/kwame-mintah/aws-lambda-model-deployment)
 
 ## GitHub Action (CI/CD)
 

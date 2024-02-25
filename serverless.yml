@@ -111,3 +111,16 @@ functions:
           - sagemaker:CreateTrainingJob
         Resource:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
+
+  modelDeployment:
+    name: MLOpsModelDeployment
+    image: ${self:custom.ecrRepository}/mlops-model-deployment:${env:MODEL_DEPLOYMENT_VERSION}
+    environment:
+      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
+    events:
+      - s3:
+          bucket: ${ssm:mlops-eu-west-2-dev-automl-data}
+          event: s3:ObjectCreated:*
+          rules:
+            - suffix: .tar.gz
+          existing: true # Bucket created via Terraform
