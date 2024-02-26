@@ -107,7 +107,6 @@ functions:
       - Effect: "Allow"
         Action:
           - sagemaker:CreateHyperParameterTuningJob
-          - sagemaker:CreateModel
           - sagemaker:CreateTrainingJob
         Resource:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
@@ -124,3 +123,27 @@ functions:
           rules:
             - suffix: .tar.gz
           existing: true # Bucket created via Terraform
+    iamRoleStatementsName: ModelDeploymentRole
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - s3:GetObject
+        Resource:
+          - ${ssm:mlops-eu-west-2-dev-model-output-arn}
+          - ${ssm:mlops-eu-west-2-dev-model-output-arn}/*
+      - Effect: "Allow"
+        Action:
+          - kms:GenerateDataKey
+          - kms:Decrypt
+        Resource:
+          - "${ssm:mlops-eu-west-2-dev-model-output-kms-key-arn}"
+      - Effect: "Allow"
+        Action:
+          - sagemaker:AddTags
+          - sagemaker:CreateEndpoint
+          - sagemaker:CreateEndpointConfig
+          - sagemaker:CreateModel
+        Resource:
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint-config/xgboost*"
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint/xgboost*"
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:model/xgboost*"
