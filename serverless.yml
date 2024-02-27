@@ -106,7 +106,6 @@ functions:
           - "${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}"
       - Effect: "Allow"
         Action:
-          - sagemaker:CreateHyperParameterTuningJob
           - sagemaker:CreateTrainingJob
         Resource:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
