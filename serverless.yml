@@ -10,6 +10,10 @@ provider:
   region: eu-west-2 # ${env:AWS_REGION, 'eu-west-2'}
   deploymentBucket:
     name: ${ssm:mlops-eu-west-2-dev-serverless-deployment} # Bucket create via Terraform.
+  tags:
+    project: MLOps
+    region: ${aws:region}
+    source: https://github.com/kwame-mintah/aws-automlops-serverless-deployment
 
 custom:
   ecrRepository: ${file(./parameters.yml):ecrRepository}
@@ -20,10 +24,13 @@ configValidationMode: error
 # 'warn' reports deprecations on the go, 'error' will result with an exception being thrown on first approached deprecation
 deprecationNotificationMode: warn:summary
 
+# AWS Lambda function documentation:
+# https://www.serverless.com/framework/docs/providers/aws/guide/functions
 functions:
   dataPreProcessing:
     name: MLOpsDataPreProcessing
     image: ${self:custom.ecrRepository}/mlops-data-preprocessing:${env:DATA_PREPROCESSING_VERSION}
+    description: Perform data preprocessing on new data received.
     environment:
       PREPROCESSED_INPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-data}
       PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
@@ -64,6 +71,7 @@ functions:
   modelTraining:
     name: MLOpsModelTraining
     image: ${self:custom.ecrRepository}/mlops-model-training:${env:MODEL_TRAINING_VERSION}
+    description: Split preprocessed data into training and validation for training job.
     environment:
       PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
       MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
@@ -113,6 +121,7 @@ functions:
   modelDeployment:
     name: MLOpsModelDeployment
     image: ${self:custom.ecrRepository}/mlops-model-deployment:${env:MODEL_DEPLOYMENT_VERSION}
+    description: Create serverless inference endpoint for new models.
     environment:
       MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
       SAGEMAKER_ROLE_ARN: ${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}
