@@ -115,15 +115,22 @@ functions:
     image: ${self:custom.ecrRepository}/mlops-model-deployment:${env:MODEL_DEPLOYMENT_VERSION}
     environment:
       MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
+      SAGEMAKER_ROLE_ARN: ${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}
     events:
       - s3:
-          bucket: ${ssm:mlops-eu-west-2-dev-automl-data}
+          bucket: ${ssm:mlops-eu-west-2-dev-model-output}
           event: s3:ObjectCreated:*
           rules:
             - suffix: .tar.gz
           existing: true # Bucket created via Terraform
     iamRoleStatementsName: ModelDeploymentRole
     iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - iam:GetRole
+          - iam:PassRole
+        Resource:
+          - "${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}"
       - Effect: "Allow"
         Action:
           - s3:GetObject
