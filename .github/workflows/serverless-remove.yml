@@ -26,8 +26,8 @@ jobs:
         id: "lambda-verions"
         run: |
           echo "DATA_PREPROCESSING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-data-preprocessing/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
-          echo "MODEL_TRAINING_VERSION=$(curl -sL https://github.com/kwame-mintah/aws-lambda-model-training/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
-          echo "MODEL_DEPLOYMENT_VERSION=$(curl -sL https://github.com/kwame-mintah/aws-lambda-model-deployment/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
+          echo "MODEL_TRAINING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-model-training/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
+          echo "MODEL_DEPLOYMENT_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-model-deployment/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
 
       - name: "Serverless remove"
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca
