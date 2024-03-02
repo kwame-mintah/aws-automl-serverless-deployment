@@ -30,14 +30,12 @@ jobs:
           --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
           | jq . --raw-output)" \
           >> "$GITHUB_OUTPUT"
-
           echo "MODEL_TRAINING_VERSION=$(aws ecr describe-images \
           --output json \
           --repository-name mlops-model-training \
           --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
           | jq . --raw-output)" \
           >> "$GITHUB_OUTPUT"
-
           echo "MODEL_DEPLOYMENT_VERSION=$(aws ecr describe-images \
           --output json \
           --repository-name mlops-model-deployment \
