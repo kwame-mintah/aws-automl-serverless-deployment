@@ -26,12 +26,29 @@ jobs:
       - name: "Checkout"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
 
-      - name: "Curl latest lambda tags"
+      - name: "Get latest lambda tags from AWS ECR"
         id: "lambda-verions"
         run: |
-          echo "DATA_PREPROCESSING_VERSION=$(curl -sL https://api.github.com/repos/kwame-mintah/aws-lambda-data-preprocessing/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
-          echo "MODEL_TRAINING_VERSION=$(curl -sL https://github.com/kwame-mintah/aws-lambda-model-training/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
-          echo "MODEL_DEPLOYMENT_VERSION=$(curl -sL https://github.com/kwame-mintah/aws-lambda-model-deployment/tags | jq -r ".[0].name")" >> "$GITHUB_OUTPUT"
+          echo "DATA_PREPROCESSING_VERSION=$(aws ecr describe-images \
+          --output json \
+          --repository-name mlops-data-preprocessing \
+          --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
+          | jq . --raw-output)" \
+          >> "$GITHUB_OUTPUT"
+
+          echo "MODEL_TRAINING_VERSION=$(aws ecr describe-images \
+          --output json \
+          --repository-name mlops-model-training \
+          --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
+          | jq . --raw-output)" \
+          >> "$GITHUB_OUTPUT"
+
+          echo "MODEL_DEPLOYMENT_VERSION=$(aws ecr describe-images \
+          --output json \
+          --repository-name mlops-model-deployment \
+          --query 'sort_by(imageDetails,& imagePushedAt)[-1].imageTags[0]' \
+          | jq . --raw-output)" \
+          >> "$GITHUB_OUTPUT"
 
       - name: "Serverless deployment"
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca
