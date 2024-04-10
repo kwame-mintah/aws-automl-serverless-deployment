@@ -3,8 +3,8 @@
 [![🧩 Serverless deployment to AWS](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-deploy.yml/badge.svg)](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-deploy.yml)
 [![💥 Serverless remove resources](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-remove.yml/badge.svg)](https://github.com/kwame-mintah/aws-automlops-serverless-deployment/actions/workflows/serverless-remove.yml)
 
-This repository contains the serverless deployment yaml for lambda functions used to achieve MLOps Level 2 within AWS. Not all resources
-are created by this deployment in AWS, some resources are created via the [terraform-aws-machine-learning-pipeline](https://github.com/kwame-mintah/terraform-aws-machine-learning-pipeline) repository.
+This repository contains the serverless deployment yaml for lambda functions used to achieve [MLOps Level 2 within AWS](https://aws.amazon.com/what-is/mlops/#seo-faq-pairs#how-to-implement-mlops-in-the-organization). Not all resources
+are created by this deployment in AWS, some resources are created via Terraform in this repository [terraform-aws-machine-learning-pipeline](https://github.com/kwame-mintah/terraform-aws-machine-learning-pipeline) repository.
 
 The lambda functions deployed aim to automate, preparing data and transforming features, training and tuning, deploying models and running inferences etc.
 
@@ -29,8 +29,15 @@ The source code for all lambda functions are stored in GitHub:
 - dataPreProcessing: [aws-lambda-data-preprocessing](https://github.com/kwame-mintah/aws-lambda-data-preprocessing)
 - modelTraining: [aws-lambda-model-training](https://github.com/kwame-mintah/aws-lambda-model-training)
 - modelDeployment: [aws-lambda-model-deployment](https://github.com/kwame-mintah/aws-lambda-model-deployment)
+- modelEvaluation: [aws-lambda-model-evaluation](https://github.com/kwame-mintah/aws-lambda-model-evaluation)
 
 ## GitHub Action (CI/CD)
 
 The GitHub Action will deploy the lambda functions using the [serverless](https://github.com/serverless/github-action) action. Docker images used for deployment are stored
 within an AWS ECR repository.
+
+## Note
+
+This repository is to serve as an example, the architecture provided may not apply to all use cases due to the limitations of lambdas. Please consider other AWS services,
+for instance Elastic Container Service (ECS), for much better performance and longer running tasks. As the MLOps workflow has been split into various components,
+it should be easy to identify areas that could benefit to being moved to a different service with better compute.
