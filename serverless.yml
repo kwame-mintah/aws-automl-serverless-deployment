@@ -38,7 +38,6 @@ functions:
     image: ${self:custom.ecrRepository}/mlops-data-preprocessing:${env:DATA_PREPROCESSING_VERSION}
     description: Perform data preprocessing on new data received.
     environment:
-      PREPROCESSED_INPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-data}
       PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
     events:
       - s3:
