@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x]
+        serverless-stage: [dev]
     steps:
       - name: "Checkout"
         uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
@@ -32,7 +32,7 @@ jobs:
       - name: "Serverless remove"
         uses: serverless/github-action@189dd6854a3b12ecff4a02c49351779f919933ca
         with:
-          args: -c "serverless plugin install --name serverless-iam-roles-per-function && serverless remove"
+          args: -c "serverless plugin install --name serverless-iam-roles-per-function && serverless remove --stage ${{ matrix.serverless-stage }}"
           entrypoint: /bin/sh
         env:
           DATA_PREPROCESSING_VERSION: ${{ steps.lambda-verions.outputs.DATA_PREPROCESSING_VERSION }}
