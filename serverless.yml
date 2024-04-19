@@ -12,7 +12,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   # Apply environment variable to ALL lambda functions
   environment:
-    ENVIRONMENT: ${opt:stage, 'dev'}
+    SERVERLESS_ENVIRONMENT: ${opt:stage, 'dev'}
   deploymentBucket:
     name: ${ssm:mlops-eu-west-2-${self:provider.stage}-serverless-deployment} # Bucket create via Terraform.
   tags:
