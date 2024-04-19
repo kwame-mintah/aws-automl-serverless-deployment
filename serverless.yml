@@ -1,3 +1,4 @@
+# https://www.serverless.com/framework/docs/providers/aws/guide/serverless.yml
 service: automlops-stack
 
 frameworkVersion: "3"
@@ -8,11 +9,16 @@ plugins:
 provider:
   name: aws
   region: eu-west-2 # ${env:AWS_REGION, 'eu-west-2'}
+  stage: ${opt:stage, 'dev'}
+  # Apply environment variable to ALL lambda functions
+  environment:
+    ENVIRONMENT: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: ${ssm:mlops-eu-west-2-dev-serverless-deployment} # Bucket create via Terraform.
+    name: ${ssm:mlops-eu-west-2-${self:provider.stage}-serverless-deployment} # Bucket create via Terraform.
   tags:
     project: MLOps
     region: ${aws:region}
+    environment: ${opt:stage, 'dev'}
     source: https://github.com/kwame-mintah/aws-automlops-serverless-deployment
 
 custom:
@@ -32,11 +38,11 @@ functions:
     image: ${self:custom.ecrRepository}/mlops-data-preprocessing:${env:DATA_PREPROCESSING_VERSION}
     description: Perform data preprocessing on new data received.
     environment:
-      PREPROCESSED_INPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-data}
-      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
+      PREPROCESSED_INPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-data}
+      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
     events:
       - s3:
-          bucket: ${ssm:mlops-eu-west-2-dev-data}
+          bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-data}
           event: s3:ObjectCreated:*
           rules:
             - prefix: data/
@@ -56,28 +62,28 @@ functions:
           - s3:PutObject
           - s3:PutObjectTagging
         Resource:
-          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}
-          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}/*
-          - ${ssm:mlops-eu-west-2-dev-data-arn}
-          - ${ssm:mlops-eu-west-2-dev-data-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-data-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-data-arn}/*
       - Effect: "Allow"
         Action:
           - kms:GenerateDataKey
           - kms:Decrypt
         Resource:
-          - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
-          - "${ssm:mlops-eu-west-2-dev-data-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-data-kms-key-arn}"
 
   modelTraining:
     name: MLOpsModelTraining
     image: ${self:custom.ecrRepository}/mlops-model-training:${env:MODEL_TRAINING_VERSION}
     description: Split preprocessed data into training and validation for training job.
     environment:
-      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-automl-data}
-      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
+      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
+      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
     events:
       - s3:
-          bucket: ${ssm:mlops-eu-west-2-dev-automl-data}
+          bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
           event: s3:ObjectCreated:*
           rules:
             - prefix: automl/
@@ -95,23 +101,23 @@ functions:
           - s3:PutObject
           - s3:PutObjectTagging
         Resource:
-          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}
-          - ${ssm:mlops-eu-west-2-dev-automl-data-arn}/*
-          - ${ssm:mlops-eu-west-2-dev-model-output-arn}
-          - ${ssm:mlops-eu-west-2-dev-model-output-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-arn}/*
       - Effect: "Allow"
         Action:
           - kms:GenerateDataKey
           - kms:Decrypt
         Resource:
-          - "${ssm:mlops-eu-west-2-dev-automl-data-kms-key-arn}"
-          - "${ssm:mlops-eu-west-2-dev-model-output-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-kms-key-arn}"
       - Effect: "Allow"
         Action:
           - iam:GetRole
           - iam:PassRole
         Resource:
-          - "${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-role-arn}"
       - Effect: "Allow"
         Action:
           - sagemaker:CreateTrainingJob
@@ -123,11 +129,11 @@ functions:
     image: ${self:custom.ecrRepository}/mlops-model-deployment:${env:MODEL_DEPLOYMENT_VERSION}
     description: Create serverless inference endpoint for new models.
     environment:
-      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-dev-model-output}
-      SAGEMAKER_ROLE_ARN: ${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}
+      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
+      SAGEMAKER_ROLE_ARN: ${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-role-arn}
     events:
       - s3:
-          bucket: ${ssm:mlops-eu-west-2-dev-model-output}
+          bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
           event: s3:ObjectCreated:*
           rules:
             - suffix: .tar.gz
@@ -139,19 +145,19 @@ functions:
           - iam:GetRole
           - iam:PassRole
         Resource:
-          - "${ssm:mlops-eu-west-2-dev-sagemaker-role-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-role-arn}"
       - Effect: "Allow"
         Action:
           - s3:GetObject
         Resource:
-          - ${ssm:mlops-eu-west-2-dev-model-output-arn}
-          - ${ssm:mlops-eu-west-2-dev-model-output-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-arn}/*
       - Effect: "Allow"
         Action:
           - kms:GenerateDataKey
           - kms:Decrypt
         Resource:
-          - "${ssm:mlops-eu-west-2-dev-model-output-kms-key-arn}"
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-kms-key-arn}"
       - Effect: "Allow"
         Action:
           - sagemaker:AddTags
