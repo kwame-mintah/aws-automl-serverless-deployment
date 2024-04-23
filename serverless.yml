@@ -37,8 +37,6 @@ functions:
     name: MLOpsDataPreProcessing
     image: ${self:custom.ecrRepository}/mlops-data-preprocessing:${env:DATA_PREPROCESSING_VERSION}
     description: Perform data preprocessing on new data received.
-    environment:
-      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
     events:
       - s3:
           bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-data}
@@ -77,9 +75,6 @@ functions:
     name: MLOpsModelTraining
     image: ${self:custom.ecrRepository}/mlops-model-training:${env:MODEL_TRAINING_VERSION}
     description: Split preprocessed data into training and validation for training job.
-    environment:
-      PREPROCESSED_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
-      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
     events:
       - s3:
           bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data}
