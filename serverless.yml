@@ -14,12 +14,22 @@ provider:
   environment:
     SERVERLESS_ENVIRONMENT: ${opt:stage, 'dev'}
   deploymentBucket:
-    name: ${ssm:mlops-eu-west-2-${self:provider.stage}-serverless-deployment} # Bucket create via Terraform.
+    name: ${ssm:mlops-eu-west-2-${opt:stage, 'dev'}-serverless-deployment} # Bucket create via Terraform.
   tags:
     project: MLOps
     region: ${aws:region}
     environment: ${opt:stage, 'dev'}
     source: https://github.com/kwame-mintah/aws-automlops-serverless-deployment
+  # IAM role to give permissions to Lambda functions
+  iam:
+    role:
+      name: MLOpsDefaultRole
+      statements:
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+          Resource:
+            - "arn:aws:ssm:${aws:region}:${aws:accountId}:parameter/*"
 
 custom:
   ecrRepository: ${file(./parameters.yml):ecrRepository}
