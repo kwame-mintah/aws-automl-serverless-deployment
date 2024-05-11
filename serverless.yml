@@ -132,9 +132,6 @@ functions:
     name: MLOpsModelDeployment
     image: ${self:custom.ecrRepository}/mlops-model-deployment:${env:MODEL_DEPLOYMENT_VERSION}
     description: Create serverless inference endpoint for new models.
-    environment:
-      MODEL_OUTPUT_BUCKET_NAME: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
-      SAGEMAKER_ROLE_ARN: ${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-role-arn}
     events:
       - s3:
           bucket: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output}
