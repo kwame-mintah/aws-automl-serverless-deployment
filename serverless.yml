@@ -176,3 +176,50 @@ functions:
           - sqs:SendMessage
         Resource:
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+
+  modelEvaluation:
+    name: MLOpsModelEvaluation
+    image: ${self:custom.ecrRepository}/mlops-model-evaluation:${env:MODEL_EVALUATION_VERSION}
+    description: Invoke inference requests to AWS SageMaker endpoint(s).
+    events:
+      - sqs: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+    iamRoleStatementsName: ModelEvaluationRole
+    iamRoleStatements:
+      - Effect: "Allow"
+        Action:
+          - iam:GetRole
+          - iam:PassRole
+        Resource:
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-role-arn}"
+      - Effect: "Allow"
+        Action:
+          - sqs:GetQueueAttributes
+          - sqs:GetQueueUrl
+          - sqs:ReceiveMessage
+          - sqs:DeleteMessage
+        Resource:
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+      - Effect: "Allow"
+        Action:
+          - sagemaker:InvokeEndpoint
+          - sagemaker:InvokeEndpointAsync
+          - sagemaker:InvokeEndpointWithResponseStream
+        Resource:
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint/xgboost*"
+      - Effect: "Allow"
+        Action:
+          - s3:GetObject
+          - s3:GetObjectTagging
+          - s3:GetObjectVersionTagging
+          - s3:ListBucket
+          - s3:ListBucketVersions
+          - s3:PutObjectTagging
+        Resource:
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}/*
+      - Effect: "Allow"
+        Action:
+          - kms:GenerateDataKey
+          - kms:Decrypt
+        Resource:
+          - "${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-kms-key-arn}"
