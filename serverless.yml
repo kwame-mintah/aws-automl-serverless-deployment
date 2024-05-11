@@ -169,3 +169,10 @@ functions:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint-config/xgboost*"
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint/xgboost*"
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:model/xgboost*"
+      - Effect: "Allow"
+        Action:
+          - sqs:GetQueueAttributes
+          - sqs:GetQueueUrl
+          - sqs:SendMessage
+        Resource:
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
