@@ -201,6 +201,7 @@ functions:
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
       - Effect: "Allow"
         Action:
+          - sagemaker:DescribeEndpoint
           - sagemaker:InvokeEndpoint
           - sagemaker:InvokeEndpointAsync
           - sagemaker:InvokeEndpointWithResponseStream
