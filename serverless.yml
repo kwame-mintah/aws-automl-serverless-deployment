@@ -175,14 +175,14 @@ functions:
           - sqs:GetQueueUrl
           - sqs:SendMessage
         Resource:
-          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-queue-arn}
 
   modelEvaluation:
     name: MLOpsModelEvaluation
     image: ${self:custom.ecrRepository}/mlops-model-evaluation:${env:MODEL_EVALUATION_VERSION}
     description: Invoke inference requests to AWS SageMaker endpoint(s).
     events:
-      - sqs: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+      - sqs: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-queue-arn}
     iamRoleStatementsName: ModelEvaluationRole
     iamRoleStatements:
       - Effect: "Allow"
@@ -198,7 +198,7 @@ functions:
           - sqs:ReceiveMessage
           - sqs:DeleteMessage
         Resource:
-          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-queue-arn}
       - Effect: "Allow"
         Action:
           - sagemaker:DescribeEndpoint
