@@ -56,6 +56,7 @@ functions:
             - suffix: .csv
           existing: true # Bucket created via Terraform
     iamRoleStatementsName: DataPreProcessingRole
+    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -94,6 +95,7 @@ functions:
             - suffix: .csv
           existing: true # Bucket created via Terraform
     iamRoleStatementsName: ModelTrainingRole
+    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -140,6 +142,7 @@ functions:
             - suffix: .tar.gz
           existing: true # Bucket created via Terraform
     iamRoleStatementsName: ModelDeploymentRole
+    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
@@ -184,6 +187,7 @@ functions:
     events:
       - sqs: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-queue-arn}
     iamRoleStatementsName: ModelEvaluationRole
+    iamRoleStatementsInherit: true
     iamRoleStatements:
       - Effect: "Allow"
         Action:
