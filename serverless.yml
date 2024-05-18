@@ -127,6 +127,7 @@ functions:
       - Effect: "Allow"
         Action:
           - sagemaker:CreateTrainingJob
+          - sagemaker:AddTags
         Resource:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
 
@@ -162,16 +163,20 @@ functions:
           - kms:Decrypt
         Resource:
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-output-kms-key-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-kms-key-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-sagemaker-kms-key-arn}
       - Effect: "Allow"
         Action:
           - sagemaker:AddTags
           - sagemaker:CreateEndpoint
           - sagemaker:CreateEndpointConfig
           - sagemaker:CreateModel
+          - sagemaker:ListTags
         Resource:
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint-config/xgboost*"
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:endpoint/xgboost*"
           - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:model/xgboost*"
+          - "arn:aws:sagemaker:${aws:region}:${aws:accountId}:training-job/xgboost*"
       - Effect: "Allow"
         Action:
           - sqs:GetQueueAttributes
