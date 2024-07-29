@@ -14,13 +14,16 @@ The lambda functions deployed aim to automate, preparing data and transforming f
 
 1. User has received new data.
 2. Data is uploaded to a GitHub repository.
-3. A GitHub action is triggered uploading the data to an S3 Bucket.
+3. A GitHub action is triggered uploading the data to a S3 Bucket.
 4. Lambda function for data preprocessing is run due to an event trigger on the bucket.
-5. Upon completion the transform data is uploaded to another bucket.
-6. Lambda function to start the training job is started due to an event trigger on the bucket.
-7. Training job is started using data split for train, test and validation purposes.
-8. Completed model is uploaded to an S3 Bucket.
-9. Lambda function to deploy the new model for inference and evaluation etc.
+5. Upon completion the transformed data is uploaded to another bucket.
+6. Lambda function will trigger the SageMaker training job with various hyperparameters.
+7. Training job is started using data split for training and validation.
+8. Completed model is uploaded to a S3 Bucket.
+9. Lambda function to deploy the new model for inference using serverless endpoint.
+10. Message is sent to queue containing endpoint name and test data location.
+11. Lambda function will invoke serverless endpoint with test data.
+12. Results of predictions stored in a S3 bucket for Data scientist to examine.
 
 ## Lambda repositories
 
