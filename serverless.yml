@@ -223,10 +223,13 @@ functions:
           - s3:GetObjectVersionTagging
           - s3:ListBucket
           - s3:ListBucketVersions
+          - s3:PutObject
           - s3:PutObjectTagging
         Resource:
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-arn}/*
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-arn}/*
       - Effect: "Allow"
         Action:
           - kms:GenerateDataKey
