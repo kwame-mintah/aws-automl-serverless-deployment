@@ -190,6 +190,7 @@ functions:
     name: MLOpsModelEvaluation
     image: ${self:custom.ecrRepository}/mlops-model-evaluation:${env:MODEL_EVALUATION_VERSION}
     description: Invoke inference requests to AWS SageMaker endpoint(s).
+    timeout: 300 # Waiting for serverless endpoint to be 'InService' can take ~3 mins, also need to account for invoking model.
     events:
       - sqs: ${ssm:mlops-eu-west-2-${self:provider.stage}-model-evaluation-queue-arn}
     iamRoleStatementsName: ModelEvaluationRole
@@ -237,3 +238,4 @@ functions:
           - kms:Decrypt
         Resource:
           - ${ssm:mlops-eu-west-2-${self:provider.stage}-automl-data-kms-key-arn}
+          - ${ssm:mlops-eu-west-2-${self:provider.stage}-model-monitoring-kms-key-arn}
