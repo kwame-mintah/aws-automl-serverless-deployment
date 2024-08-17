@@ -10,6 +10,7 @@ provider:
   name: aws
   region: eu-west-2 # ${env:AWS_REGION, 'eu-west-2'}
   stage: ${opt:stage, 'dev'}
+  timeout: 30
   # Apply environment variable to ALL lambda functions
   environment:
     SERVERLESS_ENVIRONMENT: ${opt:stage, 'dev'}
