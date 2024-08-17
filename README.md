@@ -8,6 +8,12 @@ are created by this deployment in AWS, some resources are created via Terraform 
 
 The lambda functions deployed aim to automate, preparing data and transforming features, training and tuning, deploying models and running inferences etc.
 
+## Notice
+
+This repository is to serve as an example, the architecture proposed may not apply to all use cases due to the limitations of lambdas. Please consider other AWS services,
+for instance Elastic Container Service (ECS), for much better performance and longer running tasks. As the MLOps workflow has been split into various components,
+it should be easy to identify areas that could benefit to being moved to a different service with better compute.
+
 # Architecture
 
 ![proposed-automlops-level-2](/docs/drawio/aws-automlops-deployment.png)
@@ -39,8 +45,30 @@ The source code for all lambda functions are stored in GitHub:
 The GitHub Action will deploy the lambda functions using the [serverless](https://github.com/serverless/github-action) action. Docker images used for deployment are stored
 within an AWS ECR repository.
 
-## Note
+## Deploy serverless via CLI
 
-This repository is to serve as an example, the architecture provided may not apply to all use cases due to the limitations of lambdas. Please consider other AWS services,
-for instance Elastic Container Service (ECS), for much better performance and longer running tasks. As the MLOps workflow has been split into various components,
-it should be easy to identify areas that could benefit to being moved to a different service with better compute.
+If you wish to apply serverless changes via your machine instead of using GitHub Actions, please ensure the relevant AWS
+credentials have been set as environment variables, terraform changes applied deploy, lambda versions environment
+variables set and serverless CLI is installed.
+
+> [!NOTE]
+>
+> Please see each lambdas GitHub tags to get the lambda version e.g. https://github.com/kwame-mintah/aws-lambda-data-preprocessing/tags, Would be `DATA_PREPROCESSING_VERSION=X.Y.Z`.
+
+1. Install the [`serverless-iam-roles-per-function`](https://www.serverless.com/plugins/serverless-iam-roles-per-function) plugin:
+
+   ```shell
+   serverless plugin install --name serverless-iam-roles-per-function
+   ```
+
+2. Deploy resources to your chosen environment e.g. `dev`, `staging` or `prod`:
+
+   ```shell
+   serverless deploy --stage <env>
+   ```
+
+3. Remove deployed resources in an environment e.g. `dev`, `staging` or `prod`:
+
+   ```shell
+   serverless remove --stage <env>
+   ```
